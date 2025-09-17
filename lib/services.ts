@@ -75,10 +75,26 @@ export const columnService = {
   async createColumn(
     supabase: SupabaseClient,
     column: Omit<Column, "id" | "created_at">,
-  ): Promise<Board> {
+  ): Promise<Column> {
     const { data, error } = await supabase
       .from("columns")
       .insert(column)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  },
+
+  async updateColumnTitle(
+    supabase: SupabaseClient,
+    columnId: string,
+    title: string,
+  ): Promise<Column> {
+    const { data, error } = await supabase
+      .from("columns")
+      .update({ title })
+      .eq("id", columnId)
       .select()
       .single();
 
@@ -117,6 +133,25 @@ export const taskService = {
       .insert(task)
       .select()
       .single();
+
+    if (error) throw error;
+    return data;
+  },
+
+  async moveTask(
+    supabase: SupabaseClient,
+    taskId: string,
+    newColumnId: string,
+    newOrder: number,
+  ) {
+    const { data, error } = await supabase
+      .from("tasks")
+      .update({
+        column_id: newColumnId,
+        sort_order: newOrder,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", taskId);
 
     if (error) throw error;
     return data;
