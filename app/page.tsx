@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 
 export default function Home() {
-  const { isSignedIn, user } = useUser();
+  const { isSignedIn } = useUser();
 
   const features = [
     {

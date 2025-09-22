@@ -45,6 +45,14 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
+type TaskData = {
+  title: string;
+  description?: string;
+  assignee?: string;
+  due_date?: string;
+  priority: "low" | "medium" | "high";
+};
+
 function DropabbleColumn({
   column,
   children,
@@ -53,10 +61,37 @@ function DropabbleColumn({
 }: {
   column: ColumnWithTasks;
   children: React.ReactNode;
-  onCreateTask: (taskData: any) => Promise<void>;
+  onCreateTask: (taskData: TaskData) => Promise<void>;
   onEditColumn: (column: ColumnWithTasks) => void;
 }) {
   const { setNodeRef, isOver } = useDroppable({ id: column.id });
+
+  const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.currentTarget);
+
+    const taskData: TaskData = {
+      title: formData.get("title") as string,
+      description: (formData.get("description") as string) || undefined,
+      assignee: (formData.get("assignee") as string) || undefined,
+      due_date: (formData.get("dueDate") as string) || undefined,
+      priority:
+        (formData.get("priority") as "low" | "medium" | "high") || "medium",
+    };
+
+    if (taskData.title.trim()) {
+      await onCreateTask(taskData);
+
+      const trigger = document.querySelector(
+        '[data-state="open"]',
+      ) as HTMLElement;
+
+      if (trigger) {
+        trigger.click();
+      }
+    }
+  };
 
   return (
     <div
@@ -109,7 +144,7 @@ function DropabbleColumn({
                 <p className="text-sm text-gray-600">Add a task to the board</p>
               </DialogHeader>
 
-              <form className="space-y-4" onSubmit={onCreateTask}>
+              <form className="space-y-4" onSubmit={handleFormSubmit}>
                 <div className="space-y-2">
                   <Label>Title *</Label>
                   <Input
@@ -376,7 +411,9 @@ export default function BoardPage() {
         color: newColor || board.color,
       });
       setIsEditingTitle(false);
-    } catch (error) {}
+    } catch {
+      throw new Error("Failed to update board");
+    }
   }
 
   async function createTask(taskData: {
@@ -394,8 +431,9 @@ export default function BoardPage() {
     await createRealTask(targetColumn.id, taskData);
   }
 
-  async function handleCreateTask(e: any) {
+  async function handleMainFormSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+
     const formData = new FormData(e.currentTarget);
     const taskData = {
       title: formData.get("title") as string,
@@ -406,6 +444,10 @@ export default function BoardPage() {
         (formData.get("priority") as "low" | "medium" | "high") || "medium",
     };
 
+    await handleCreateTask(taskData);
+  }
+
+  async function handleCreateTask(taskData: TaskData) {
     if (taskData.title.trim()) {
       await createTask(taskData);
 
@@ -748,7 +790,7 @@ export default function BoardPage() {
                   </p>
                 </DialogHeader>
 
-                <form className="space-y-4" onSubmit={handleCreateTask}>
+                <form className="space-y-4" onSubmit={handleMainFormSubmit}>
                   <div className="space-y-2">
                     <Label>Title *</Label>
                     <Input

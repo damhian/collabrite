@@ -8,9 +8,8 @@ import {
   taskService,
 } from "../services";
 import { Board, ColumnWithTasks, Task } from "../supabase/models";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useSupabase } from "../supabase/SupabaseProvider";
-import { create } from "domain";
 
 export function useBoards() {
   const { user } = useUser();
@@ -19,13 +18,7 @@ export function useBoards() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (user) {
-      loadBoards();
-    }
-  }, [user, supabase]);
-
-  async function loadBoards() {
+  const loadBoards = useCallback(async () => {
     if (!user) return;
 
     try {
@@ -54,7 +47,13 @@ export function useBoards() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [supabase, user]);
+
+  useEffect(() => {
+    if (user) {
+      loadBoards();
+    }
+  }, [user, loadBoards]);
 
   async function createBoard(boardData: {
     title: string;
@@ -88,13 +87,7 @@ export function useBoard(boardId: string) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (boardId) {
-      loadBoard();
-    }
-  }, [boardId, supabase]);
-
-  async function loadBoard() {
+  const loadBoard = useCallback(async () => {
     if (!boardId) return;
 
     try {
@@ -114,7 +107,13 @@ export function useBoard(boardId: string) {
     } finally {
       setLoading(false);
     }
-  }
+  }, [boardId, supabase]);
+
+  useEffect(() => {
+    if (boardId) {
+      loadBoard();
+    }
+  }, [boardId, loadBoard]);
 
   async function updateBoard(boardId: string, updates: Partial<Board>) {
     try {
