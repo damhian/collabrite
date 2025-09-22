@@ -57,11 +57,8 @@ export default function DashboardPage() {
     },
   });
 
-  // Build the boards with task count set it from the useBoard hook and create a service to get the task count for each board
-  const boardsWithTaskCount = boards.map((board: Board) => ({
-    ...board,
-    taskCount: 0, // This would need to be calculated from actual data
-  }));
+  // Board task counts are already fetched with the boards data
+  const boardsWithTaskCount = boards;
 
   const filteredBoards = boardsWithTaskCount.filter((board: Board) => {
     const matchesSearch = board.title
@@ -74,7 +71,11 @@ export default function DashboardPage() {
       (!filters.dateRange.end ||
         new Date(board.created_at) <= new Date(filters.dateRange.end));
 
-    return matchesSearch && matchesDateRange;
+    const matchesTaskCount =
+      (!filters.taskCount.min || board.taskCount >= filters.taskCount.min) &&
+      (!filters.taskCount.max || board.taskCount <= filters.taskCount.max);
+
+    return matchesSearch && matchesDateRange && matchesTaskCount;
   });
 
   function clearFilters() {
@@ -93,6 +94,8 @@ export default function DashboardPage() {
 
   // const canCreateBoard = !isFreeUser || boards.length < 5;
   const canCreateBoard = !isFreeUser || boards.length < 2;
+
+  console.log(boards);
 
   const handleCreateBoard = async () => {
     if (!canCreateBoard) {
@@ -199,10 +202,13 @@ export default function DashboardPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-xs sm:text-sm font-medium text-gray-600">
-                    Total Boards
+                    Total Tasks Counts
                   </p>
                   <p className="text-xl sm:text-2xl font-bold text-gray-900">
-                    {boards.length}
+                    {Object.values(boards).reduce(
+                      (sum, board) => sum + board.taskCount,
+                      0,
+                    )}
                   </p>
                 </div>
                 <div className="h-10 w-10 sm:h-12 sm:w-12 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -280,9 +286,14 @@ export default function DashboardPage() {
                     <CardHeader className="pb-3">
                       <div className="flex items-center justify-between">
                         <div className={`w-4 h-4 ${board.color} rounded`} />
-                        <Badge className="text-xs" variant="secondary">
-                          New
-                        </Badge>
+                        <div className="flex">
+                          <Badge className="text-xs" variant="secondary">
+                            New
+                          </Badge>
+                          <Badge className="text-xs" variant="outline">
+                            {board.taskCount}
+                          </Badge>
+                        </div>
                       </div>
                     </CardHeader>
                     <CardContent className="p-4 sm:p-6 ">
@@ -325,9 +336,11 @@ export default function DashboardPage() {
                       <CardHeader className="pb-3">
                         <div className="flex items-center justify-between">
                           <div className={`w-4 h-4 ${board.color} rounded`} />
-                          <Badge className="text-xs" variant="secondary">
-                            New
-                          </Badge>
+                          <div>
+                            <Badge className="text-xs" variant="secondary">
+                              New
+                            </Badge>
+                          </div>
                         </div>
                       </CardHeader>
                       <CardContent className="p-4 sm:p-6 ">

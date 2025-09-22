@@ -27,7 +27,7 @@ export const boardService = {
 
   async createBoard(
     supabase: SupabaseClient,
-    board: Omit<Board, "id" | "created_at" | "updated_at">,
+    board: Omit<Board, "id" | "created_at" | "updated_at" | "taskCount">,
   ): Promise<Board> {
     const { data, error } = await supabase
       .from("boards")

@@ -7,7 +7,7 @@ import {
   columnService,
   taskService,
 } from "../services";
-import { Board, Column, ColumnWithTasks, Task } from "../supabase/models";
+import { Board, ColumnWithTasks, Task } from "../supabase/models";
 import { useEffect, useState } from "react";
 import { useSupabase } from "../supabase/SupabaseProvider";
 import { create } from "domain";
@@ -31,8 +31,22 @@ export function useBoards() {
     try {
       setLoading(true);
       setError(null);
+
+      // Get all boards for the user
       const data = await boardService.getBoards(supabase!, user.id);
-      setBoards(data);
+
+      // Get tasks for all boards in parallel
+      const tasksByBoard = await Promise.all(
+        data.map((board) => taskService.getTasksByBoard(supabase!, board.id)),
+      );
+
+      // Calculate task counts and merge with boards
+      const boardsWithTaskCounts = data.map((board, index) => ({
+        ...board,
+        taskCount: tasksByBoard[index].length,
+      }));
+
+      setBoards(boardsWithTaskCounts);
     } catch (error) {
       setError(
         error instanceof Error ? error.message : "Failed to load boards",
@@ -82,6 +96,8 @@ export function useBoard(boardId: string) {
 
   async function loadBoard() {
     if (!boardId) return;
+
+    console.log("masuk fungsi loadBoard", boardId);
 
     try {
       setLoading(true);

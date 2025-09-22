@@ -6,6 +6,7 @@ export interface Board {
   user_id: string;
   created_at: string;
   updated_at: string;
+  taskCount: number;
 }
 
 export interface Column {
