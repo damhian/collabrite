@@ -95,8 +95,6 @@ export default function DashboardPage() {
   // const canCreateBoard = !isFreeUser || boards.length < 5;
   const canCreateBoard = !isFreeUser || boards.length < 2;
 
-  console.log(boards);
-
   const handleCreateBoard = async () => {
     if (!canCreateBoard) {
       setShowUpgradeDialog(true);

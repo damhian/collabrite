@@ -97,8 +97,6 @@ export function useBoard(boardId: string) {
   async function loadBoard() {
     if (!boardId) return;
 
-    console.log("masuk fungsi loadBoard", boardId);
-
     try {
       setLoading(true);
       setError(null);

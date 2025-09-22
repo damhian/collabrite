@@ -160,8 +160,6 @@ export const taskService = {
 
 export const boardDataService = {
   async getBoardWithColumns(supabase: SupabaseClient, boardId: string) {
-    console.log("boardId: ", boardId);
-
     const [board, columns] = await Promise.all([
       boardService.getBoard(supabase, boardId),
       columnService.getColumns(supabase, boardId),
