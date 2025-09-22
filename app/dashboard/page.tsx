@@ -364,7 +364,7 @@ export default function DashboardPage() {
                         <div className="flex flex-row justify-end text-xs mt-4">
                           <span className="mt-0.5 mr-1">Total Task: </span>
                           <Badge className="text-xs" variant="outline">
-                            {board.taskCount}
+                            {board.taskCount ? board.taskCount : 0}
                           </Badge>
                         </div>
                       </CardContent>
