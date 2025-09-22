@@ -288,9 +288,6 @@ export default function DashboardPage() {
                           <Badge className="text-xs" variant="secondary">
                             New
                           </Badge>
-                          <Badge className="text-xs" variant="outline">
-                            {board.taskCount}
-                          </Badge>
                         </div>
                       </div>
                     </CardHeader>
@@ -310,6 +307,12 @@ export default function DashboardPage() {
                           Updated{" "}
                           {new Date(board.updated_at).toLocaleDateString()}
                         </span>
+                      </div>
+                      <div className="flex flex-row justify-end text-xs mt-4">
+                        <span className="mt-0.5 mr-1">Total Task: </span>
+                        <Badge className="text-xs" variant="outline">
+                          {board.taskCount}
+                        </Badge>
                       </div>
                     </CardContent>
                   </Card>
@@ -357,6 +360,12 @@ export default function DashboardPage() {
                             Updated{" "}
                             {new Date(board.updated_at).toLocaleDateString()}
                           </span>
+                        </div>
+                        <div className="flex flex-row justify-end text-xs mt-4">
+                          <span className="mt-0.5 mr-1">Total Task: </span>
+                          <Badge className="text-xs" variant="outline">
+                            {board.taskCount}
+                          </Badge>
                         </div>
                       </CardContent>
                     </Card>
