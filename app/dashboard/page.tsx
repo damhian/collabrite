@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Spinner } from "@/components/ui/shadcn-io/spinner";
 import { usePlan } from "@/lib/contexts/PlanContext";
 import { useBoards } from "@/lib/hooks/useBoards";
 import { Board } from "@/lib/supabase/models";
@@ -26,7 +27,6 @@ import {
   Filter,
   Grid3x3,
   List,
-  Loader2,
   Plus,
   Rocket,
   Search,
@@ -106,8 +106,8 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div>
-        <Loader2 /> <span>Loading boards...</span>
+      <div className="min-h-screen flex flex-col items-center justify-center space-y-4 text-blue-500">
+        <Spinner variant="ring" size={64} />
       </div>
     );
   }
