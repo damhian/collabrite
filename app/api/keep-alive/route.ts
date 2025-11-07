@@ -15,9 +15,9 @@ export async function GET() {
     if (error) throw error;
 
     return NextResponse.json({ status: "alive" }, { status: 200 });
-  } catch (err: any) {
+  } catch (error) {
     return NextResponse.json(
-      { status: "error", message: err.message },
+      { status: "error", message: error },
       { status: 500 },
     );
   }
